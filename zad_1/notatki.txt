@@ -1,0 +1,2 @@
+pi jest liczone na bazie tekstu referencyjnego
+* zad 4 - podczas testowania wziąć ze tekst THIS IS A TEST i można spróbować najpierw na kartce policzyć(powinno wyjść między ok. 15 a 20) a potem w programie a potem pozamieniać miejscami i policzyć i powinno wyjść bardzo dużę (test hi kwadrat)
