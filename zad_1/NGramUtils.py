@@ -48,7 +48,7 @@ class NGramUtils:
 
         return ngrams_probability
 
-    def calculate_hi_test(self, ngrams, ngrams_probability, excluded_ngrams = []):
+    def calculate_hi_test(self, ngrams, ngrams_probability, excluded_ngrams = []) -> int:
         hi= 0
         ngram_occurances = self.get_ngrams_number(ngrams)
         for ngram, count in ngrams.items():
@@ -59,6 +59,8 @@ class NGramUtils:
             Ei = ngram_occurances * probability
             hi += (Ci - Ei)**2 / Ei
 
-        print("Wyniki testu hi kwadrat: " + str(hi))
+        #print("Wyniki testu hi kwadrat: " + str(hi))
+
+        return hi
 
     

@@ -20,6 +20,7 @@ def parse_args():
     parser.add_argument('file', nargs='?', help="Destination file [Optional]")
     parser.add_argument('-r', type=int, help="Odczyt referencyjnej bazy X-gramow")
     parser.add_argument('-s', action="store_true", help="Test hi kwadrat")
+    parser.add_argument('-a', help="Perform brute force attack on Cesar cipher")
 
     args = parser.parse_args()
 
@@ -63,12 +64,21 @@ def main():
             nGramUtils.calculate_ngrams_probability(ngrams, args.file)
 
         else:
-            reference_ngrams = nGramUtils.read_ngrams_from_file(path_to_reference_ngrams_directory + reference_ngrams_files[args.r - 1])
+            reference_ngrams = nGramUtils.read_ngrams_from_file(
+                path_to_reference_ngrams_directory + reference_ngrams_files[args.r - 1]
+            )
             reference_ngrams_probability = nGramUtils.calculate_ngrams_probability(
                 reference_ngrams
             )
 
             nGramUtils.calculate_hi_test(ngrams, reference_ngrams_probability, excluded_ngrams)
+
+    if args.a and args.a == "bf":
+        input_text = FileUtils.read_file(args.i, True)
+        cesarCipher = CesarCipher()
+        decrypted_text = cesarCipher.brute_force_attack_with_chi2(input_text)
+        FileUtils.write_file(args.o, decrypted_text)
+
 
 if __name__ == "__main__":
     main()
