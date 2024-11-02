@@ -45,3 +45,6 @@ class CesarCipher:
         print(plain_text_array[best_score_index] + " dla klucza " + str(best_score_index + 1))
 
         return plain_text_array[best_score_index]
+    
+    def get_key_from_string(self, key_as_string):
+        return int(key_as_string)
