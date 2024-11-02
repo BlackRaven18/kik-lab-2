@@ -1,10 +1,15 @@
 from NGramUtils import NGramUtils
+from scipy.stats import chi2
 
 
 class AffineCipher:
 
     # Liczby wzglednie pierwsze z 26
     possible_a_values = [1, 3, 5, 7, 9, 11, 15, 17, 19, 21, 23, 25]
+
+    def __init__(self):
+        self.alfabet_length = 26
+        self.degrees_of_freedom = 26 - 1
 
     def encrypt(self, text, a, b):
         result = ""
@@ -23,6 +28,8 @@ class AffineCipher:
 
     def brute_force_attack(self, ciphertext):
         nGramUtils = NGramUtils()
+        critical_value = chi2.ppf(0.95, self.degrees_of_freedom)
+        print("Wartość krytyczna: " + str(critical_value) + "\n")
 
         scores = []
         best_score_index = 0
@@ -38,12 +45,16 @@ class AffineCipher:
                 ngrams = nGramUtils.generate_ngrams_occurrence(plaintext, 1)
 
                 score = nGramUtils.calculate_hi_test(ngrams, reference_ngrams_probability)
-                scores.append({
-                    "plain_text": plaintext,
-                    "hi_test": score,
-                    "a": str(a),
-                    "b": str(b),
-                })
+
+                if(score < critical_value):
+                    print("Znaleziono możliwy tekst angielski: ")
+                    print(plaintext + " dla klucza " + str(a) + " " + str(b) + " i wartości testu hi kwadrat: " + str(score) + "\n")
+                    scores.append({
+                        "plain_text": plaintext,
+                        "hi_test": score,
+                        "a": str(a),
+                        "b": str(b),
+                    })
      
 
         for i in range(len(scores)):

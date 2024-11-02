@@ -3,6 +3,10 @@ from scipy.stats import chi2
 
 class CesarCipher:
 
+    def __init__(self,):
+        self.alfabet_length = 26
+        self.degrees_of_freedom = 26 - 1
+
     def encrypt(self, text, key) -> str:
         encrypted_text = ""
         for char in text:
@@ -19,24 +23,32 @@ class CesarCipher:
     def brute_force_attack(self, ciphertext):
         
         nGramUtils = NGramUtils()
+        critical_value = chi2.ppf(0.95, self.degrees_of_freedom)
         scores = []
         best_score_index = 0
+
+        print("Wartość krytyczna: " + str(critical_value) + "\n")
 
         reference_ngrams = nGramUtils.read_ngrams_from_file("eng-n-grams/" + "english_monograms.txt")
         reference_ngrams_probability = nGramUtils.calculate_ngrams_probability(
              reference_ngrams
         )
+
         for key in range(1, 26):
             plaintext = self.decrypt(ciphertext, key)
 
             ngrams = nGramUtils.generate_ngrams_occurrence(plaintext, 1)
 
             score = nGramUtils.calculate_hi_test(ngrams, reference_ngrams_probability)
-            scores.append({
-                "plain_text": plaintext,
-                "hi_test": score,
-                "key": str(key)
-            })
+
+            if score < critical_value:
+                print("Znaleziono możliwy tekst angielski: ")
+                print(plaintext + " dla klucza " + str(key) + " i wartości testu hi kwadrat: " + str(score) + "\n")
+                scores.append({
+                    "plain_text": plaintext,
+                    "hi_test": score,
+                    "key": str(key)
+                })
      
 
         for i in range(len(scores)):
