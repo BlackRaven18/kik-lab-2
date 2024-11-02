@@ -6,7 +6,6 @@ from AffineCipher import AffineCipher
 
 path_to_reference_ngrams_directory = "eng-n-grams/"
 reference_ngrams_files = ["english_monograms.txt", "english_bigrams.txt", "english_trigrams.txt", "english_quadgrams.txt"]
-excluded_ngrams = ["J", "K", "Q", "X", "Z"]
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -61,8 +60,14 @@ def main():
     
     if args.a and args.a == "bf":
         input_text = FileUtils.read_file(args.i, True)
-        cesarCipher = CesarCipher()
-        decrypted_text = cesarCipher.brute_force_attack(input_text)
+
+        if args.cesar:
+            decrypted_text = cesarCipher.brute_force_attack(input_text)
+        elif args.affine:
+            decrypted_text = affineCipher.brute_force_attack(input_text)
+        else:
+            raise Exception("Nie wybrano szyfru")
+        
         FileUtils.write_file(args.o, decrypted_text)
 
 

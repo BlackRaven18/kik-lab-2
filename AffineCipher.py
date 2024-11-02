@@ -1,5 +1,10 @@
+from NGramUtils import NGramUtils
+
 
 class AffineCipher:
+
+    # Liczby wzglednie pierwsze z 26
+    possible_a_values = [1, 3, 5, 7, 9, 11, 15, 17, 19, 21, 23, 25]
 
     def encrypt(self, text, a, b):
         result = ""
@@ -11,14 +16,44 @@ class AffineCipher:
     def decrypt(self, text, a, b):
         result = ""
         rev_a = self.mod_inverse(a, 26)
-        print(rev_a)
         for char in text:
                 result += chr((rev_a * (ord(char) - 65 - b) + 26) % 26 + 65)
 
         return result
 
     def brute_force_attack(self, ciphertext):
-        pass
+        nGramUtils = NGramUtils()
+
+        scores = []
+        best_score_index = 0
+
+        reference_ngrams = nGramUtils.read_ngrams_from_file("eng-n-grams/" + "english_monograms.txt")
+        reference_ngrams_probability = nGramUtils.calculate_ngrams_probability(
+             reference_ngrams
+        )
+        for a in self.possible_a_values:
+            for b in range(1, 26):
+                plaintext = self.decrypt(ciphertext, a, b)
+
+                ngrams = nGramUtils.generate_ngrams_occurrence(plaintext, 1)
+
+                score = nGramUtils.calculate_hi_test(ngrams, reference_ngrams_probability)
+                scores.append({
+                    "plain_text": plaintext,
+                    "hi_test": score,
+                    "a": str(a),
+                    "b": str(b),
+                })
+     
+
+        for i in range(len(scores)):
+            if scores[i]["hi_test"] < scores[best_score_index]["hi_test"]:
+                best_score_index = i
+        
+        print("Wyniki ataku bruteforce")
+        print(scores[best_score_index]["plain_text"] + " dla klucza a = " + scores[best_score_index]["a"] + " b = " + scores[best_score_index]["b"])
+
+        return scores[best_score_index]["plain_text"]
 
     def get_key_from_string(self, key_as_string):
         key = key_as_string.split(" ")
