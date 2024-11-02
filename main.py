@@ -76,7 +76,7 @@ def main():
     if args.a and args.a == "bf":
         input_text = FileUtils.read_file(args.i, True)
         cesarCipher = CesarCipher()
-        decrypted_text = cesarCipher.brute_force_attack_with_chi2(input_text)
+        decrypted_text = cesarCipher.brute_force_attack(input_text)
         FileUtils.write_file(args.o, decrypted_text)
 
 
